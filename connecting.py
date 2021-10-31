@@ -1,6 +1,6 @@
 import sqlite3
 
-conn = sqlite3.connect('employee.db')
+conn = sqlite3.connect(':memory:')
 
 c = conn.cursor()
 
@@ -8,37 +8,59 @@ c = conn.cursor()
 def main():
     i = 'run'
     num = 1
-    while i.lower() != 'quit':
+    while i.lower() != 'shutdown':
         i = input(
             'Welcome to the Burgershop Database, what would you like to do?\n')
         if i == 'create':
-            id = input('Enter employee ID : ')
-            if id.isdecimal() == False:
+            numb = input('Enter employee ID : ')
+            if numb.isdecimal() == False:
                 print('Invalid input.')
                 main()
-            first = input('Enter the employee\'s first name : ')
-            last = input('Enter the employee\'s last name : ')
-            pay = input('Enter the employee\'s yearly pay : ')
 
-        c.execute("INSERT INTO employees VALUES(?,?,?,?)",
-                  (id, first, last, pay))
+            fname = input('Enter the employee\'s first name : ')
+            lname = input('Enter the employee\'s last name : ')
+            ypay = input('Enter the employee\'s yearly pay : ')
+            beebo = [numb, fname, lname, ypay]
+            creati = (
+
+                #creation = str(creati)
+                c.execute("""INSERT INTO employees(ID,FIRST,LAST,PAY) VALUES (?,?,?,?)""", beebo))
 
         if i == 'print':
-            for row in (c.execute("SELECT id, first, last, pay from EMPLOYEES")):
-                print("First Name = " + str(row[1]))
-                print("Last Name = " + str(row[2]))
-                print("Yearly Pay = " + str(row[3]))
-                print("\n")
+            # for row in (c.execute("SELECT ID, first, last, pay from EMPLOYEES")):
+            #     print("First Name = " + str(row[1]))
+            #     print("Last Name = " + str(row[2]))
+            #     print("Yearly Pay = " + str(row[3]))
+            #     print("\n")
+            c.execute("SELECT * FROM employees")
+            print(c.fetchall())
 
-# c.execute("""CREATE TABLE employees (
-#        ID real,
-#        first text,
-#        last text,
-#         pay interger
-#        )""")
+        if i == 'reset':
+            print(str(c.execute("SELECT COUNT(ID)FROM Employees")))
+            d = input('Are you sure? y/n \n')
+            if d.lower() == 'y':
+                c.execute("DELETE FROM employees")
+                print('Deleted.')
+            else:
+                main()
+
+        if i == 'save':
+            conn.commit()
+
+        if i == 'quit':
+            conn.close()
+            break
+        # else:
+        #     main()
+
+
+c.execute("""CREATE TABLE employees (
+       ID real,
+       FIRST text,
+       LAST text,
+        PAY    interger
+       )""")
 
 
 main()
-conn.commit()
-
 conn.close()
