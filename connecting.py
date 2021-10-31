@@ -9,8 +9,9 @@ def main():
     i = 'run'
     num = 1
     while i.lower() != 'shutdown':
+        i = 'run'
         i = input(
-            'Welcome to the Burgershop Database, what would you like to do?\n')
+            'Welcome to the Burgershop Database, what would you like to do?\n').lower()
         if i == 'create':
             numb = input('Enter employee ID : ')
             if numb.isdecimal() == False:
@@ -23,15 +24,10 @@ def main():
             beebo = [numb, fname, lname, ypay]
             creati = (
 
-                #creation = str(creati)
+
                 c.execute("""INSERT INTO employees(ID,FIRST,LAST,PAY) VALUES (?,?,?,?)""", beebo))
 
         if i == 'print':
-            # for row in (c.execute("SELECT ID, first, last, pay from EMPLOYEES")):
-            #     print("First Name = " + str(row[1]))
-            #     print("Last Name = " + str(row[2]))
-            #     print("Yearly Pay = " + str(row[3]))
-            #     print("\n")
             c.execute("SELECT * FROM employees")
             print(c.fetchall())
 
@@ -43,15 +39,28 @@ def main():
                 print('Deleted.')
             else:
                 main()
+        if i == 'budget':
+            c.execute("""SELECT SUM(pay) AS budget FROM employees""")
+            print(c.fetchall())
 
         if i == 'save':
             conn.commit()
 
+        if i == 'help':
+            print("""
+            create: Input employee into the database.\n
+            print: Displays the employees on the database.\n 
+            reset: Cleans the database.\n
+            budget: Returns the cost of all our employees.\n
+            save: Sumbit new data into the database.\n
+            quit: Closes the database.\n
+            """)
+
         if i == 'quit':
             conn.close()
             break
-        # else:
-        #     main()
+        else:
+            main()
 
 
 c.execute("""CREATE TABLE employees (
